@@ -5,6 +5,7 @@ GFXSRC += $(GFXLIB)/src/gfx.c
 include $(GFXLIB)/src/gdriver/gdriver.mk
 include $(GFXLIB)/src/gos/gos.mk
 include $(GFXLIB)/src/gdisp/gdisp.mk
+include $(GFXLIB)/src/gfile/gfile.mk
 include $(GFXLIB)/drivers/gdisp/ILI9341/driver.mk
 
 TARGET = tft

@@ -22,7 +22,6 @@
 *************************************************/
 #include <stdio.h>
 #include "stm32f107xx.h"
-#include "gfxconf.h"
 #include <gfx.h>
 
 // Function declarations. Add your functions here
@@ -63,6 +62,7 @@ __attribute__ ((section(".vectors"))) = {
 
 static font_t  font;
 volatile uint64_t tick_count = 0;
+static gdispImage myImage;
 
 /*************************************************
 * Copy the data contents from LMA to VMA
@@ -186,19 +186,41 @@ int main(void)
 	set_system_clock_to_72Mhz();
 	init_systick(72000, 1); // 1 ms ticks
 
+	// Initialize the screen
 	gfxInit();
-	// Enable FONTS and TEXTs from gfxconf.h (GDISP_NEED_TEXT and GDISP_INCLUDE_FONT_UI2)
+
+	// Enable FONTS and TEXTs in gfxconf.h (GDISP_NEED_TEXT and GDISP_INCLUDE_FONT_UI2)
 	font = gdispOpenFont("UI2");
-	gdispDrawStringBox(0, 0, gdispGetWidth(),  gdispGetHeight(), "Do. Or do not. There is no try!...", font, White, justifyCenter);
+	gdispDrawStringBox(0, 0, gdispGetWidth(),  gdispGetHeight(), "Woot!!!", font, White, justifyCenter);
 	gdispDrawStringBox(gdispGetWidth()/2, gdispGetHeight()/2, gdispGetWidth()/2,  gdispGetHeight()/2, "*(&^%$#@!)+_            ", font, White, justifyCenter);
-	// Enable Circles from gfxconf.h (GDISP_NEED_CIRCLE)
+
+	// Enable Circles in gfxconf.h (GDISP_NEED_CIRCLE)
 	gdispFillCircle(gdispGetWidth()/2, 100, 50, Green);
 	gdispDrawCircle(gdispGetWidth()/2, 240, 10, Red);
-
 	gdispDrawBox(10,10,50,50,Yellow);
+
+	// Wait 10 secs
+	uint32_t curTick = gfxSystemTicks();
+	while( gfxSystemTicks() < curTick + 10000);
+
+	// Enable IMAGE, BMP, GFILE and ROMFS in gfxconf.h (GDISP_NEED_IMAGE,
+	//   GDISP_NEED_IMAGE_BMP, GFX_USE_GFILE and GFILE_NEED_ROMFS)
+	// Got the image from demos/modules/gdisp/images directory
+	gdispClear(Black);
+	gdispImageOpenFile(&myImage, "test-pal8.bmp");
+	gdispImageDraw(&myImage, 0, 0, gdispGetWidth(), gdispGetHeight(), 0, 0);
+	gdispImageClose(&myImage);
+
+	// Wait 10 secs
+	curTick = gfxSystemTicks();
+	while( gfxSystemTicks() < curTick + 10000);
+
+	gdispClear(Black);
+	gdispDrawStringBox(0, 0, gdispGetWidth(),  gdispGetHeight(), "Do. Or do not. There is no try!...", font, White, justifyCenter);
 
 	while(1)
 	{
+
 	}
 
 	// Should never reach here
