@@ -5,6 +5,17 @@
  *              http://ugfx.org/license.html
  */
 
+/*
+ *  I80 - 8-bit parallel bus interface type I
+ *  Display backlight control - PWM - PE9 - TIM1 CH1
+ *  RST - PE8
+ *  RS - PE12
+ *  CS - PE15
+ *  RD - PE10
+ *  WR - PE11
+ *  Data RE7:0
+ */
+
 #ifndef _GDISP_LLD_BOARD_H
 #define _GDISP_LLD_BOARD_H
 
@@ -37,11 +48,7 @@ static GFXINLINE void init_board(GDisplay *g) {
 		RCC->APB2ENR |=  (1 << 0); //  AFIO clock
 		RCC->APB2ENR |=  (1 << 6); // GPIOE clock
 		RCC->APB2ENR |= (1 << 11); //  TIM1 clock
-		// Display backlight control - PWM - PE9 - TIM1 CH1
-		// RST - PE8, RS - PE12
-		// CS - PE15
-		// PMRD - PE10, PMWR - PE11
-		// Data RE1:7
+
 		AFIO->MAPR |= 0x000000C0; // Remap PE9
 		GPIOE->CRL  = 0x22222222;
 		GPIOE->CRH  = 0x222222B2; // All output except PE9
@@ -54,10 +61,10 @@ static GFXINLINE void init_board(GDisplay *g) {
 		TIM1->BDTR |= (1 << 15);
 		TIM1->CR1 |= (1 << 0);
 
+		// Default states
 		SET_RS;
 		SET_RD;
 		SET_WR;
-		CLR_CS;
 
 		break;
 	}
